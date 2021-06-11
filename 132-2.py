@@ -10,10 +10,10 @@ total=0
 a=time.time()
 
 def 爬虫(num):
-    db = pymysql.connect(host='remotemysql.com', user="LKrNYglnPu",password='SJP4zwTBe0',database="LKrNYglnPu",charset='utf8')
+    db = pymysql.connect(host='remotemysql.com', user="V0Y3Pj4eE9",password='bHlu56mY0A',database="V0Y3Pj4eE9",charset='utf8')
     cursor = db.cursor()
     urls = []
-    r=requests.get('https://qiqimh.top/?232xe-tupianqu/YSE/index_'+num+'.html')
+    r=requests.get('https://qiqimh.top/?232xe-tupianqu/MSE/index_'+num+'.html')
     html=r.text
     sp=BeautifulSoup(html,"lxml")
     for x in sp.find_all('a'):
@@ -27,7 +27,7 @@ def 爬虫(num):
         for x in sp.find_all('img'):
             img=x.get('src')
             print(img)           
-            sql="""INSERT INTO `imgs` (`url`) VALUES ('"""+img+"""');"""
+            sql="""INSERT INTO `imgs-2` (`url`) VALUES ('"""+img+"""');"""
             try:        
                 cursor.execute(sql)  
                 db.commit()

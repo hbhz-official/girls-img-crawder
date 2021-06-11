@@ -6,21 +6,7 @@ import threading
 import time
 import pymysql
 
-def 上传数据库(img):
-
-
-    sql="""INSERT INTO `img` (`url`, `style`) VALUES ('"""+img+"""', '');"""
-
-    try:
-
-       cursor.execute(sql)  
-       db.commit()
-       print('上传成功')
-
-    except:
-   # 如果发生错误则回滚
-
-        db.rollback()
+total=0
 
 def 爬虫(url):
     db = pymysql.connect(host='remotemysql.com', user="LKrNYglnPu",password='SJP4zwTBe0',database="LKrNYglnPu",charset='utf8')
@@ -39,14 +25,15 @@ def 爬虫(url):
             if sp.find('img') != None:
                 img= sp.find('img').get('src')
                 print(img)
-                sql="""INSERT INTO `img` (`url`, `style`) VALUES ('"""+img+"""', '');"""
+                global total
+                total = total+1
+                sql="""INSERT INTO `imgs` (`url`) VALUES ('"""+img+"""');"""
 
                 try:
 
                     cursor.execute(sql)  
-                    db.commit()
-                    print('上传成功')
-                    total = total+1
+                    db.commit()                   
+                    print('上传成功:'+str(total))
 
                 except:
    # 如z果发生错误则回滚
@@ -54,36 +41,35 @@ def 爬虫(url):
                     db.rollback()
     db.close()         
 
-total=0
 
 
-for i in range (12,21):
+
+for i in range (1,77):
     a=time.time()
 
 
     urls = []
-    r=requests.get('http://www.xjjmzt.com/xiaojiejie/tuapicgm/25_'+str(i)+'.html')
+    r=requests.get('http://www.qjtaotu.com/quanji/tutups/pr/'+str(i)+'.html')
     html=r.text
     sp=BeautifulSoup(html,"lxml")
     for x in sp.find_all('a'):
-        if x.get('href').find('xiaojiejie')>=0:
+        if x.get('href').find('quanji')>=0:
             print(x.get('href'))
-            urls.append('http://www.xjjmzt.com'+x.get('href'))
+            urls.append('http://www.qjtaotu.com'+x.get('href'))
 
 
 
 # 写法1
     for url in urls:
-        thread_num = len(threading.enumerate())
-        while thread_num < 9 :
-            t=threading.Thread(target=爬虫,kwargs={'url':url})
-            t.setDaemon(True)
-            t.start()
-            print('线程启动')
-            break
-        else:
-            continue   
         
+        while True :
+            thread_num = len(threading.enumerate())
+            if thread_num < 9:            
+                t=threading.Thread(target=爬虫,kwargs={'url':url})
+                t.setDaemon(True)
+                t.start()
+                print('线程启动')
+                break         
     t.join()
     b=time.time()
 
